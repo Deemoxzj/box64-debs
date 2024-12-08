@@ -41,8 +41,7 @@ jobs:
       - name: Build debs
         run: |
           cd /opt/
-          sudo apt install checkinstall -y
-          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu -y
           rm -rf box64
           git clone https://github.com/ptitSeb/box64
           cd box64
