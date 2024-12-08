@@ -42,13 +42,21 @@ jobs:
         run: |
           cd /opt/
           sudo apt install checkinstall -y
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
           rm -rf box64
           git clone https://github.com/ptitSeb/box64
           cd box64
           mkdir build
           cd build
-          cmake .. -DARM64=ON -DBAD_SIGNAL=ON -DBOX32=ON -DBOX32_BINFMT=ON -DSD8G2=ON -DARM_DYNAREC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
-          sudo checkinstall make install
+          echo '# toolchain-aarch64.cmake
+          set(CMAKE_SYSTEM_NAME Linux)
+          set(CMAKE_SYSTEM_PROCESSOR aarch64)
+          set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
+          set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+          set(CMAKE_ASM_COMPILER aarch64-linux-gnu-gcc)' | sudo tee /opt/box64/build/toolchain-aarch64.cmake > /dev/null
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain-aarch64.cmake -DARM64=ON -DBAD_SIGNAL=ON -DBOX32=ON -DBOX32_BINFMT=ON -DSD8G2=ON -DARM_DYNAREC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo --install-prefix=/usr/
+          make -j$(nproc)
+          cpack -G DEB
 
       - uses: actions/upload-artifact@v3
         with:
