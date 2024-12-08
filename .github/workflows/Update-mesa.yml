@@ -1,4 +1,4 @@
-name: update-box64-nightly
+name: update-mesa-arm64-nightly
 
 on:
   schedule:
@@ -72,9 +72,9 @@ jobs:
           chmod +x build.sh
           ./build.sh
           cd /opt/
-          tar -cjvf mesa-nightly.tar.gz mesa
+          tar -cjvf mesa-nightly-arm64.tar.gz mesa
 
       - uses: actions/upload-artifact@v3
         with:
-          name: mesa-nightly
-          path: /opt/mesa-nightly.tar.gz
+          name: mesa-nightly-arm64
+          path: /opt/mesa-nightly-arm64.tar.gz
