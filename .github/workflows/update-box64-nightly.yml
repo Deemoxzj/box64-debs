@@ -38,6 +38,10 @@ jobs:
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
 
+        - name: Build debs
+        run: |
+          bash box64-arm64.sh
+
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
