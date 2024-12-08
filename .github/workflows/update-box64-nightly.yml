@@ -25,8 +25,7 @@ jobs:
           pkg-config ca-certificates rpm apt-utils \
           python3 make gettext pinentry-tty devscripts dpkg-dev \
           gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-          binutils-aarch64-linux-gnu 
-          apt build-dep box64 -y
+          binutils-aarch64-linux-gnu
           #pkg-config-aarch64-linux-gnu          
           sudo sed -i "s/^deb/deb [arch=amd64,i386]/g" /etc/apt/sources.list
           echo "deb [arch=arm64,armhf] http://ports.ubuntu.com/ $(lsb_release -s -c) main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
