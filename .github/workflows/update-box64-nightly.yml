@@ -40,7 +40,10 @@ jobs:
 
       - name: Build debs
         run: |
-          bash box64-arm64.sh
+          cd /opt/
+          git clone https://github.com/Deemoxzj/box64-debs.git box64-debs-build
+          cd box64-debs-build
+          ./box64-arm64.sh
 
       - uses: actions/upload-artifact@v3
         with:
