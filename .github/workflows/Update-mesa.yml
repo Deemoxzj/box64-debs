@@ -18,18 +18,20 @@ jobs:
         run: |
           # add dependencies expected by scripts
           export DEBIAN_FRONTEND=noninteractive
+          sed -i "s/jammy/noble/g" /etc/apt/sources.list
           apt update
           #apt upgrade -y
           apt install -y software-properties-common lsb-release \
           sudo wget curl build-essential jq autoconf automake \
           pkg-config ca-certificates rpm apt-utils \
           python3 make gettext pinentry-tty devscripts dpkg-dev \
-          gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+          gcc-14-aarch64-linux-gnu g++-14-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
           binutils-aarch64-linux-gnu
+          sudo apt build-dep mesa -y
           #pkg-config-aarch64-linux-gnu          
           sudo sed -i "s/^deb/deb [arch=amd64,i386]/g" /etc/apt/sources.list
-          echo "deb [arch=arm64,armhf] http://ports.ubuntu.com/ $(lsb_release -s -c) main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64,armhf] http://ports.ubuntu.com/ $(lsb_release -s -c)-updates main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+          # echo "deb [arch=arm64,armhf] http://ports.ubuntu.com/ $(lsb_release -s -c) main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+          # echo "deb [arch=arm64,armhf] http://ports.ubuntu.com/ $(lsb_release -s -c)-updates main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
           sudo dpkg --add-architecture arm64
           sudo apt update
           sudo apt install -y libc6:arm64
@@ -39,9 +41,7 @@ jobs:
           sudo apt install -y git cmake
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
-          sudo apt install llvm llvm-dev clang libclang-dev libpolly-dev -y
-          sudo apt build-dep mesa -y
-          sudo apt install python3-mako python3-yaml -y
+          sudo apt install llvm-19:arm64 llvm-19-dev:arm64 clang-19:arm64 libclang-19-dev:arm64 libpolly-19-dev:arm64 -y
           
       - name: Build mesa
         run: |
