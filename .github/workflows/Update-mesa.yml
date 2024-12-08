@@ -42,28 +42,39 @@ jobs:
           sudo apt install -y git cmake
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
-
-      - name: Build debs
+          sudo apt install llvm-19 llvm-19-dev clang-19 libclang-19-dev libpolly-19-dev -y
+          sudo apt build-dep mesa -y
+          sudo apt install python3-mako python3-yaml -y
+      - name: Build mesa
         run: |
           cd /opt/
-          rm -rf box64
-          git clone https://github.com/ptitSeb/box64
-          cd box64
-          mkdir build
-          cd build
-          echo '# toolchain-aarch64.cmake
-          set(CMAKE_SYSTEM_NAME Linux)
-          set(CMAKE_SYSTEM_PROCESSOR aarch64)
-          set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
-          set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
-          set(CMAKE_ASM_COMPILER aarch64-linux-gnu-gcc)' | sudo tee /opt/box64/build/toolchain-aarch64.cmake > /dev/null
-          echo 'cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain-aarch64.cmake -DARM64=ON -DSD8G2=ON -DBAD_SIGNAL=ON -DBOX32=ON -DBOX32_BINFMT=ON -DARM_DYNAREC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo  --install-prefix=/usr/' | sudo tee /opt/box64/build/build.sh > /dev/null
+          git clone https://gitlab.freedesktop.org/mesa/mesa.git mesa-sources
+          git clone https://github.com/MastaG/mesa-turnip-ppa.git
+          cp mesa-turnip-ppa/turnip-patches/* mesa-sources/
+          cd mesa-sources
+          patch -p1 < dri3.patch
+          patch -p1 < fix-for-anon-file.patch
+          patch -p1 < fix-for-getprogname.patch
+          mkdir b
+          cd b
+          echo "meson .. --cross-file=cross_arm64.txt --libdir=lib/aarch64-linux-gnu -Dgallium-drivers=freedreno,virgl,zink,d3d12,softpipe,llvmpipe,svga -Dvulkan-drivers=freedreno,swrast,virtio -Dglx=dri -Dplatforms=x11,wayland -Dbuildtype=release -Dllvm=enabled -Dxlib-lease=enabled -Dgles2=enabled -Dgles1=enabled -Dgallium-nine=true -Dgallium-opencl=icd -Degl-native-platform=x11 -Degl=enabled -Dfreedreno-kmds=kgsl,msm,virtio,wsl  -Dvulkan-beta=true -Dglx-direct=true -Dtools=drm-shim,freedreno,etnaviv,glsl,nir -Dgallium-vdpau=enabled -Dopengl=true -Dosmesa=true -Dpower8=enabled -Dglvnd=enabled -Dteflon=true -Dvideo-codecs=all -Dgallium-d3d12-video=enabled -Dgallium-d3d12-graphics=enabled -Dxmlconfig=enabled -Dgbm=enabled -Dshader-cache=enabled -Dgallium-va=enabled -Dgallium-xa=enabled -Dgallium-rusticl=true -Dgallium-rusticl-enable-drivers=auto -Dshader-cache-max-size='1G' -Dmicrosoft-clc=enabled -Dspirv-to-dxil=true -Ddraw-use-llvm=true -Dllvm-orcjit=true -Dsse2=true -Ddatasources=freedreno --prefix=/opt/mesa/" | sudo tee -a /opt/mesa-sources/b/build.sh
+          echo "[binaries]
+          c = 'aarch64-linux-gnu-gcc'
+          cpp = 'aarch64-linux-gnu-g++'
+          ar = 'aarch64-linux-gnu-ar'
+          strip = 'aarch64-linux-gnu-strip'
+          pkgconfig = 'aarch64-linux-gnu-pkg-config'
+          [host_machine]
+          system = 'linux'
+          cpu_family = 'aarch64'
+          cpu = 'aarch64'
+          endian = 'little'" | sudo tee -a /opt/mesa-sources/b/cross_arm64.txt
           chmod +x build.sh
           ./build.sh
-          make -j$(nproc)
-          cpack -G DEB
+          cd /opt/
+          tar -cjvf mesa-nightly.tar.gz mesa
 
       - uses: actions/upload-artifact@v3
         with:
-          name: box64-SD8G2
-          path: /opt/box64/build/*.deb
+          name: mesa-nightly
+          path: /opt/mesa-nightly.tar.gz
