@@ -24,7 +24,7 @@ jobs:
           apt install -y software-properties-common lsb-release \
           sudo wget curl build-essential jq autoconf automake \
           pkg-config ca-certificates rpm apt-utils \
-          python3 make gettext pinentry-tty devscripts dpkg-dev \
+          python3 make gettext pinentry-tty devscripts dpkg-dev 
           sudo apt install -y gcc-14-aarch64-linux-gnu g++-14-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
           #pkg-config-aarch64-linux-gnu          
           sudo sed -i "s/^deb/deb [arch=amd64,i386]/g" /etc/apt/sources.list
