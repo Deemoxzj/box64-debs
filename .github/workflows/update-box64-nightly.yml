@@ -41,9 +41,14 @@ jobs:
       - name: Build debs
         run: |
           cd /opt/
-          git clone https://github.com/Deemoxzj/box64-debs.git box64-debs-build
-          cd box64-debs-build
-          ./box64-arm64.sh
+          sudo apt install checkinstall -y
+          rm -rf box64
+          git clone https://github.com/ptitSeb/box64
+          cd box64
+          mkdir build
+          cd build
+          cmake .. -DARM64=ON -DBAD_SIGNAL=ON -DBOX32=ON -DBOX32_BINFMT=ON -DSD8G2=ON -DARM_DYNAREC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo --install-prefix=/usr/
+          sudo checkinstall make install
 
       - uses: actions/upload-artifact@v3
         with:
