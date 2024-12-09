@@ -45,7 +45,7 @@ jobs:
           sudo apt install -y git cmake
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
-          sudo apt install llvm-18 llvm-18-dev clang-18 libclang-18-dev libpolly-18-dev -y
+          sudo apt install llvm-12 llvm-12-dev clang-12 libclang-12-dev libpolly-12-dev -y
           
       - name: Build mesa
         run: |
