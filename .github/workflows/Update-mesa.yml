@@ -74,6 +74,7 @@ jobs:
           ./build.sh
           apt install llvm-19 llvm-19-dev -y
           ./build.sh
+          apt install libudev-dev:arm64 -y
           cd /opt/
           tar -cjvf mesa-nightly-arm64.tar.gz mesa
 
