@@ -23,6 +23,7 @@ jobs:
           #apt upgrade -y
           sed -i "s/focal/noble/g" /etc/apt/sources.list
           apt update
+          apt full-upgrade -y
           apt install -y software-properties-common lsb-release \
           sudo wget curl build-essential jq autoconf automake \
           pkg-config ca-certificates rpm apt-utils \
