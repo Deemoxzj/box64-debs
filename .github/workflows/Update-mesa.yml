@@ -33,7 +33,7 @@ jobs:
           apt update
           dpkg --add-architecture arm64
           apt full-upgrade -y
-          apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu meson cmake sudo git llvm-19 llvm-19-dev clang-19 libclang-19-dev libpolly-19-dev curl -y
+          apt install -y gcc-14-aarch64-linux-gnu g++-14-aarch64-linux-gnu meson cmake sudo git llvm-19:arm64 llvm-19-dev:arm64 clang-19:arm64 libclang-19-dev:arm64 libpolly-19-dev:arm64 curl python3:arm64 python3-mako:arm64 python3-yaml:arm64 libglvnd-dev:arm64 pkg-config:arm64 libglvnd-dev libvdpau-dev:arm64 libvdpau-dev libva-dev:arm64 libva-dev binutils-aarch64-linux-gnu-dbg
           
       - name: Build mesa
         run: |
@@ -53,13 +53,26 @@ jobs:
           cpp = 'aarch64-linux-gnu-g++'
           ar = 'aarch64-linux-gnu-ar'
           strip = 'aarch64-linux-gnu-strip'
-          pkgconfig = 'pkg-config'
+          pkgconfig = 'aarch64-linux-gnu-pkg-config'
+          rust = '/usr/bin/rustc'
           [host_machine]
           system = 'linux'
           cpu_family = 'aarch64'
           cpu = 'aarch64'
           endian = 'little'" | sudo tee -a /opt/mesa-sources/b/cross_arm64.txt
           chmod +x build.sh
+          ./build.sh
+          apt install rustc:arm64 -y
+          ./build.sh
+          apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu -y
+          ./build.sh
+          apt install bindgen:arm64 libclc-19-dev libdrm-dev:arm64
+          ./build.sh
+          apt install python3-mako -y
+          ./build.sh
+          apt install python3-yaml -y
+          ./build.sh
+          apt install llvm-19 llvm-19-dev -y
           ./build.sh
           cd /opt/
           tar -cjvf mesa-nightly-arm64.tar.gz mesa
