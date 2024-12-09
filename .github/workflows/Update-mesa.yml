@@ -43,7 +43,7 @@ jobs:
           sudo apt install -y git cmake
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
-          sed -i "s/jammy/noble/g" /etc/apt/sources.list
+          sed -i "s/focal/noble/g" /etc/apt/sources.list
           apt update
           apt upgrade -y
           sudo apt install llvm-18 llvm-18-dev clang-18 libclang-18-dev libpolly-18-dev -y
