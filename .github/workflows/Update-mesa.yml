@@ -19,8 +19,6 @@ jobs:
           # add dependencies expected by scripts
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          #sed -i "s/jammy/noble/g" /etc/apt/sources.list
-          apt update
           #apt upgrade -y
           apt install -y software-properties-common lsb-release \
           sudo wget curl build-essential jq autoconf automake \
@@ -45,7 +43,10 @@ jobs:
           sudo apt install -y git cmake
           # avoid "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory '*'
-          sudo apt install llvm-12 llvm-12-dev clang-12 libclang-12-dev -y
+          sed -i "s/jammy/noble/g" /etc/apt/sources.list
+          apt update
+          apt upgrade -y
+          sudo apt install llvm-18 llvm-18-dev clang-18 libclang-18-dev libpolly-18-dev -y
           
       - name: Build mesa
         run: |
