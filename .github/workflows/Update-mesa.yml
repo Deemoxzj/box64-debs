@@ -19,7 +19,6 @@ jobs:
           # add dependencies expected by scripts
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          apt install pkg-config-aarch64-linux-gnu binutils-aarch64-linux-gnu -y
           #apt upgrade -y
           sed -i "s/focal/noble/g" /etc/apt/sources.list
           apt update
