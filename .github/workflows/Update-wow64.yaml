@@ -1,0 +1,56 @@
+name: update-box64-nightly
+
+on:
+  schedule:
+     - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-wine64:
+    runs-on: ubuntu-24.04
+    container: ubuntu:24.04
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          echo "deb [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular main restricted universe multiverse
+          deb-src [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular main restricted universe multiverse
+          deb [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates main restricted universe multiverse
+          deb-src [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-updates main restricted universe multiverse
+          deb [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse
+          deb-src [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ oracular-backports main restricted universe multiverse" > /etc/apt/sources.list
+          apt update
+          apt upgrade -y
+          apt install git curl wget sudo -y
+          apt build-dep wine -y
+          apt install libsane-dev -y
+          sudo apt install libavcodec-dev libavformat-dev libswscale-dev libavutil-dev libswresample-dev -y
+          sudo apt install 'oss4-*' -y
+          sudo apt install libsmbclient-dev samba-dev -y
+
+      - name: Build debs
+        run: |
+          cd /opt/
+          rm -rf 'wine*' 'wow*'
+          git clone --depth 1 https://gitlab.winehq.org/wine/wine.git wine-source
+          git clone https://gitlab.winehq.org/wine/wine-staging.git
+          wget https://github.com/bylaws/llvm-mingw/releases/download/20240929/llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64.tar.xz
+          tar -xvf llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64.tar.xz
+          export PATH=/opt/llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64/bin:$PATH
+          cd wine-source/
+          ../wine-staging/staging/patchinstall.py --all
+          mkdir build
+          cd build
+          ../configure --enable-win64 --disable-tests --with-mingw --enable-archs=x86_64,i386,arm --prefix=/opt/wine64/
+          make -j$(nproc)
+          cd /opt/
+          tar -cjvf wow64.tar.gz wine64
+ 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: wow64
+          path: /opt/wow64.tar.gz
