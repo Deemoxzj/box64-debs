@@ -48,9 +48,11 @@ jobs:
           ../configure --enable-win64 --disable-tests --with-mingw --enable-archs=x86_64,i386,arm --prefix=/opt/wine64/
           make -j$(nproc)
           cd /opt/
-          tar -cjvf wow64.tar.gz wine64
+          rm -rf wine-source
+          rm -rf wine-staging
+          tar -cjvf wow64.tar.gz *
  
       - uses: actions/upload-artifact@v3
         with:
           name: wow64
-          path: /opt/wow64.tar.gz
+          path: /opt/*.tar.gz
