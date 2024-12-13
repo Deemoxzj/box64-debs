@@ -29,7 +29,7 @@ jobs:
           apt build-dep wine -y
           apt install libsane-dev -y
           sudo apt install libavcodec-dev libavformat-dev libswscale-dev libavutil-dev libswresample-dev -y
-          sudo apt install 'oss4-*' -y
+          #sudo apt install 'oss4-*' -y
           sudo apt install libsmbclient-dev samba-dev -y
 
       - name: Build debs
