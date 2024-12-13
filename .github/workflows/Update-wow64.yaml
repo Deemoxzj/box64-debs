@@ -37,12 +37,12 @@ jobs:
           cd /opt/
           rm -rf 'wine*' 'wow*'
           git clone --depth 1 https://gitlab.winehq.org/wine/wine.git wine-source
-          git clone https://gitlab.winehq.org/wine/wine-staging.git
+          #git clone https://gitlab.winehq.org/wine/wine-staging.git
           wget https://github.com/bylaws/llvm-mingw/releases/download/20240929/llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64.tar.xz
           tar -xvf llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64.tar.xz
           export PATH=/opt/llvm-mingw-20240929-ucrt-ubuntu-20.04-x86_64/bin:$PATH
           cd wine-source/
-          ../wine-staging/staging/patchinstall.py --all
+          #../wine-staging/staging/patchinstall.py --all
           mkdir build
           cd build
           ../configure --enable-win64 --disable-tests --with-mingw --enable-archs=x86_64,i386,arm --prefix=/opt/wine64/
