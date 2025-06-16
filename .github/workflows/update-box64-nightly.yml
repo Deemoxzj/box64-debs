@@ -46,7 +46,11 @@ jobs:
         run: |
           cd /opt/
           rm -rf box64
-          git clone https://github.com/ptitSeb/box64
+          #git clone https://github.com/ptitSeb/box64
+          #正式版
+          wget 'https://github.com/ptitSeb/box64/archive/refs/tags/v0.3.6.tar.gz'
+          tar -xvf v0.3.6.tar.gz
+          mv v0.3.6 box64
           cd box64
           mkdir build
           cd build
